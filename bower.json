@@ -7,7 +7,7 @@
   "keywords": [
 	"web-component",
 	"polymer",
-	"sse",
+	"sse"
   ],
   "main": "sse-client.html",
   "license": "http://polymer.github.io/LICENSE.txt",
