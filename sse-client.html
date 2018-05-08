@@ -1,65 +1,70 @@
 <link rel="import" href="../polymer/polymer.html">
 
 <dom-module id="sse-client">
-  <template>
-    <style>
-      :host {
-        display: none;
-      }
-    </style>
-  </template>
-  <script>
+	<template>
+		<style>
+			:host {
+				display: none;
+			}
+		</style>
+	</template>
+	<script>
 
-	  class SseClient extends Polymer.Element {
+		class SseClient extends Polymer.Element {
 
-		  eventSource=null
+			constructor(){
+				super();
+				this.eventSource=null;
+			}
 
-	  	  static get is() { return 'sse-client'; }
+			static get is() { return 'sse-client'; }
 
-		  static get properties() {
-			  return {
+			static get properties() {
+				return {
 
-					  url: {
-						  type: String,
-						  notify: true
-					  }
-			  };
-		  }
+					url: {
+						type: String,
+						notify: true
+					}
+				};
+			}
 
-		  _handleEvent(event) {
-			  this.fire('message', event.detail);
-		  }
-
-
-		  close() {
-			  if(this.eventSource)
-				  this.eventSource.close();
-			  this.eventSource=null;
-		  }
-
-		  connect () {
-
-			  if(this.socket)
-				  this.close();
-
-			  if(!this.url )
-				  return;
-
-			  this.eventSource = new EventSource(this.url);
-			  const element = this
-
-			  this.eventSource.onmessage= (message)=> {
-					  const parsedMessage = JSON.parse(message.data)
-					  const event = new CustomEvent('message', {'detail': parsedMessage})
-					  element._handleEvent(event);
-              };
-		  }
+			_handleEvent(event) {
+				this.dispatchEvent(event);
+			}
 
 
-	  }
+			close() {
+				if(this.eventSource)
+					this.eventSource.close();
+				this.eventSource=null;
+			}
 
-	  window.customElements.define(SseClient.is, SseClient);
+			connect () {
+
+				if(this.eventSource!=null)
+					this.close();
+
+				if(!this.url )
+					return;
+
+				this.eventSource = new EventSource(this.url);
+				const element = this;
+
+				this.eventSource.onmessage= (message)=> {
+					const parsedMessage = JSON.parse(message.data);
+					const event = new CustomEvent('message', {'detail': parsedMessage});
+					element._handleEvent(event);
+				};
 
 
-  </script>
+			}
+
+
+		}
+
+		window.customElements.define(SseClient.is, SseClient);
+
+
+	</script>
 </dom-module>
